@@ -33,7 +33,7 @@ Find a WARC at `example.warc` and proceed with injection steps 2 and 3!
 
 ### brozzler
 
-For JS-heavy sites like BBC or Instagram, we use a headful chromium in a virtual framebuffer (xvfb) with a [WARC-writing MITM proxy](https://github.com/internetarchive/warcprox), controlled via remote debug, jobs and dedup data stored in rethinkdb.
+For JS-heavy sites like BBC or Instagram, we use a headful chromium in a virtual framebuffer (xvfb) with a [WARC-writing MITM proxy](https://github.com/internetarchive/warcprox), controlled via remote debug, jobs and dedup data stored in rethinkdb. Replay is done via [pywb](https://github.com/webrecorder/pywb).
 
 These instructions were tested on Fedora 29, but should be easy to adapt to any GNU/Linux.
 
@@ -52,12 +52,33 @@ sudo dnf install -y rethinkdb
 
 0$ rethinkdb &>>rethinkdb.log &
 
-1$ git clone https://github.com/censorship-no/brozzler
 1$ virtualenv brozzler.env
 1$ source brozzler.env/bin/activate
-1$ cd brozzler
-1$ pip install -e .[easy]
+1$ pip install https://github.com/censorship-no/brozzler[easy]
 
+# add a new site to fully recursively crawl
 1$ brozzler-new-site https://example.com/
+# launch brozzler
 1$ brozzler-easy
 ```
+
+A web dashboard with job statuses is available at <http://localhost:8881>, and pywb at <http://0.0.0.0:8880>. Warcs are output to `1$ $PWD/warcs`.
+
+This can be wrapped up in nice service files and scaled both at single and multiple hosts, but docs for that are TBD.
+
+#### Configurable crawling jobs
+
+For instance, to crawl Persian BBC at maxdepth=4:
+
+```yaml
+# bbc-job.yml
+seeds:
+  - url: http://www.bbc.com/persian
+    scope:
+      max_hops: 4
+```
+```sh
+$ brozzler-new-job bbc-job.yml
+```
+
+See [reference](https://github.com/censorship-no/brozzler/blob/master/job-conf.rst) for more details.
