@@ -62,7 +62,9 @@ sudo dnf install -y rethinkdb
 1$ brozzler-easy
 ```
 
-A web dashboard with job statuses is available at <http://localhost:8881>, and pywb at <http://0.0.0.0:8880>. Warcs are output to `1$ $PWD/warcs`.
+A web dashboard with job statuses is available at <http://localhost:8881>, and pywb at <http://0.0.0.0:8880>.
+
+Warcs are output to `1$ $PWD/warcs`, and you can check the dashboard to see which warc corresponds to which job. A larger job may have multiple warcs, each with a sequence number, soft limited at 1GB.
 
 This can be wrapped up in nice service files and scaled both at single and multiple hosts, but docs for that are TBD.
 
