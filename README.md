@@ -84,3 +84,23 @@ $ brozzler-new-job bbc-job.yml
 ```
 
 See [reference](https://github.com/censorship-no/brozzler/blob/master/job-conf.rst) for more details.
+
+#### Skip cruft capture
+
+To only capture relevant content and skip e.g. advertising requests, one can either employ a manual whitelist (see crawling jobs), or use an adblocker (essentially a crowdsourced blacklist).
+
+For the latter, we'll use chromium's [external extensions](https://developer.chrome.com/extensions/external_extensions.html). For uBlock Origin:
+
+Download its crx (a signed zip distribution file) [somehow](https://stackoverflow.com/questions/7184793), and place it to `/usr/share/chromium/extensions/cjpalhdlnbpafiamejdnhcphjbkeiagm.crx`. Then add a config file like so (note you can't actually have hash-comments in json!):
+
+```
+# /usr/share/chromium/extensions/cjpalhdlnbpafiamejdnhcphjbkeiagm.json
+#                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#                                extension id, must match
+{
+  "external_crx": "/usr/share/chromium/extensions/cjpalhdlnbpafiamejdnhcphjbkeiagm.crx",
+  "external_version": "1.18.4" # extension version
+}
+```
+
+On next launch chromium should automatically pick the extension up!
