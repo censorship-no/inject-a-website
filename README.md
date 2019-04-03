@@ -104,3 +104,11 @@ Download its crx (a signed zip distribution file) [somehow](https://stackoverflo
 ```
 
 On next launch chromium should automatically pick the extension up!
+
+#### Skip capturing big content
+
+Use following options:
+```sh
+warcprox  --max-resource-size 5000000
+brozzler-worker --skip-youtube-dl
+```
