@@ -35,6 +35,8 @@ Find a WARC at `example.warc` and proceed with injection steps 2 and 3!
 
 For JS-heavy sites like BBC or Instagram, we use a headful chromium in a virtual framebuffer (xvfb) with a [WARC-writing MITM proxy](https://github.com/internetarchive/warcprox), controlled via remote debug, jobs and dedup data stored in rethinkdb. Replay is done via [pywb](https://github.com/webrecorder/pywb).
 
+Note that deduplication and capture are global between jobs, and we do not currently have a simple way to either get full warcs (with no references to other warcs) for a single job, or to get warcs for only this particular job. Thus, it is recommended to run a separate instance of brozzler for each indepent set of crawljobs.
+
 These instructions were tested on Fedora 29, but should be easy to adapt to any GNU/Linux.
 
 Install rethinkdb:
