@@ -66,7 +66,9 @@ sudo dnf install -y rethinkdb
 
 A web dashboard with job statuses is available at <http://localhost:8881>, and pywb at <http://0.0.0.0:8880>.
 
-Warcs are output to `1$ $PWD/warcs`, and you can check the dashboard to see which warc corresponds to which job. A larger job may have multiple warcs, each with a sequence number, soft limited at 1GB.
+Warcs, softlimited at 1GB, are output to `1$ $PWD/warcs`.
+
+You can check pywb to see which warc corresponds to which url, like so: <http://localhost:8880/brozzler/*/https://example.com>.
 
 #### Configurable crawling jobs
 
