@@ -58,15 +58,13 @@ sudo dnf install -y rethinkdb
 
 # add a new site to fully recursively crawl
 1$ brozzler-new-site https://example.com/
-# launch brozzler
+# launch a brozzler-{dashboard,wayback,worker} and warcprox all-in-one
 1$ brozzler-easy
 ```
 
 A web dashboard with job statuses is available at <http://localhost:8881>, and pywb at <http://0.0.0.0:8880>.
 
 Warcs are output to `1$ $PWD/warcs`, and you can check the dashboard to see which warc corresponds to which job. A larger job may have multiple warcs, each with a sequence number, soft limited at 1GB.
-
-This can be wrapped up in nice service files and scaled both at single and multiple hosts, but docs for that are TBD.
 
 #### Configurable crawling jobs
 
@@ -112,3 +110,36 @@ Use following options:
 warcprox  --max-resource-size 5000000
 brozzler-worker --skip-youtube-dl
 ```
+
+#### Explicit setup
+
+Going from an all-in-one `brozzler-easy` to explicitly launching and configuring the services. To launch a single instance, in a new directory do:
+
+Create a config file for the online wayback service:
+```yaml
+# pywb.yml
+archive_paths: ./warcs/
+collections:
+  brozzler:
+    index_paths: !!python/object:brozzler.pywb.RethinkCDXSource
+      db: brozzler
+      table: captures
+      servers:
+      - localhost
+enable_auto_colls: false
+enable_cdx_api: true
+framed_replay: true
+port: 8880
+```
+
+And start everything:
+
+```sh
+1$ rethinkdb
+2$ warcprox -p 9999 -z --base32 --rollover-idle-time 180 --rethinkdb-stats-url 'rethinkdb://localhost/brozzler/stats' --rethinkdb-big-table-url 'rethinkdb://localhost/brozzler/captures' --rethinkdb-services-url 'rethinkdb://localhost/brozzler/services' --max-resource-size 5000000
+3$ brozzler-worker --warcprox-auto --skip-youtube-dl
+4$ brozzler-dashboard
+5$ PYWB_CONFIG_FILE=pywb.yml brozzler-wayback
+```
+
+Then, a web dashboard with job statuses is available at <http://localhost:8000>, and pywb at <http://0.0.0.0:8880>.
